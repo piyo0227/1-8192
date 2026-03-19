@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1/8192（最終完成版）</title>
+<style>
+body{font-family:sans-serif;text-align:center;background:#222;color:white;margin:0;}
+button{font-size:28px;padding:25px 50px;margin:15px;border:none;border-radius:15px;cursor:pointer;}
+#red{background:red;color:white;}
+#blue{background:blue;color:white;}
+#result{font-size:36px;margin-top:20px;height:60px;}
+#info{margin-top:10px;font-size:20px;}
+#prob{margin-top:10px;font-size:22px;color:yellow;}
+
+#history{
+  margin-top:20px;
+  background:white;
+  color:black;
+  padding:10px;
+}
+.row{
+  display:flex;
+  justify-content:flex-start;
+}
+.cell{
+  width:20px;
+  margin:2px;
+  font-weight:bold;
+  text-align:center;
+}
+.blue{color:blue;}
+.red{color:red;}
+</style>
+</head>
+<body>
+<h1>1/8192</h1>
+<p>13連続成功でクリア！</p>
+
+<button id="red" onclick="choose('赤')">赤</button>
+<button id="blue" onclick="choose('青')">青</button>
+
+<div id="result"></div>
+<div id="info"></div>
+<div id="prob"></div>
+
+<div id="history">
+  <div id="rowBlue" class="row"></div>
+  <div id="rowRed" class="row"></div>
+</div>
+
+<script>
+let streak=0;
+let history=[]; // 正解履歴（最大13）
+
+function getProbability(){
+if(streak===0) return null;
+return Math.pow(1/2, streak);
+}
+
+function updateProbDisplay(){
+const prob=getProbability();
+if(prob===null){
+document.getElementById("prob").textContent="";
+}else{
+document.getElementById("prob").textContent="現在の当たり確率：1/"+(1/prob);
+}
+}
+
+function renderHistory(){
+const blueRow=document.getElementById("rowBlue");
+const redRow=document.getElementById("rowRed");
+blueRow.innerHTML="";
+redRow.innerHTML="";
+
+// 最大13マス分描画
+for(let i=0;i<13;i++){
+  const val=history[i];
+
+  const blueCell=document.createElement("div");
+  blueCell.className="cell";
+  const redCell=document.createElement("div");
+  redCell.className="cell";
+
+  if(val==="青"){
+    blueCell.textContent="青";
+    blueCell.classList.add("blue");
+    redCell.textContent="";
+  }else if(val==="赤"){
+    redCell.textContent="赤";
+    redCell.classList.add("red");
+    blueCell.textContent="";
+  }else{
+    blueCell.textContent="";
+    redCell.textContent="";
+  }
+
+  blueRow.appendChild(blueCell);
+  redRow.appendChild(redCell);
+}
+}
+
+function addHistory(correct){
+if(history.length>=13){
+  history.shift();
+}
+history.push(correct);
+renderHistory();
+}
+
+function choose(choice){
+const prob=getProbability();
+const win = (prob===null) ? (Math.random()<0.5) : (Math.random()<prob);
+
+let correct;
+if(win){
+  correct = choice;
+}else{
+  correct = (choice === '赤') ? '青' : '赤';
+}
+
+const result=document.getElementById("result");
+const info=document.getElementById("info");
+
+addHistory(correct);
+
+if(choice === correct){
+  streak++;
+  result.textContent="当たり！";
+  result.style.color="lime";
+
+  if(streak>=13){
+    result.textContent="🎉クリア！！🎉";
+    info.textContent="13連続成功！";
+    streak=0;
+    updateProbDisplay();
+    return;
+  }
+
+}else{
+  result.textContent="ハズレ！（正解："+correct+"）";
+  result.style.color="red";
+  info.textContent="リセット";
+
+  document.body.style.background="#550000";
+  setTimeout(()=>document.body.style.background="#222",200);
+
+  streak=0;
+  updateProbDisplay();
+  return;
+}
+
+info.textContent="現在: "+streak+"連勝";
+updateProbDisplay();
+}
+
+updateProbDisplay();
+renderHistory();
+</script>
+</body>
+</html>
