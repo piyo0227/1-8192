@@ -14,23 +14,23 @@ button{font-size:28px;padding:25px 50px;margin:15px;border:none;border-radius:15
 #prob{margin-top:10px;font-size:22px;color:yellow;}
 
 #history{
-  margin-top:20px;
+  margin:40px auto;
   background:white;
   color:black;
-  padding:10px;
+  width:90%;
+  max-width:600px;
+  padding:20px 10px;
 }
 .row{
   display:flex;
-  justify-content:flex-start;
+  justify-content:space-between;
 }
 .cell{
-  width:20px;
-  margin:2px;
+  flex:1;
+  font-size:28px;
   font-weight:bold;
   text-align:center;
 }
-.blue{color:blue;}
-.red{color:red;}
 </style>
 </head>
 <body>
@@ -51,7 +51,7 @@ button{font-size:28px;padding:25px 50px;margin:15px;border:none;border-radius:15
 
 <script>
 let streak=0;
-let history=[]; // 正解履歴（最大13）
+let history=[];
 
 function getProbability(){
 if(streak===0) return null;
@@ -73,7 +73,6 @@ const redRow=document.getElementById("rowRed");
 blueRow.innerHTML="";
 redRow.innerHTML="";
 
-// 最大13マス分描画
 for(let i=0;i<13;i++){
   const val=history[i];
 
@@ -84,11 +83,9 @@ for(let i=0;i<13;i++){
 
   if(val==="青"){
     blueCell.textContent="青";
-    blueCell.classList.add("blue");
     redCell.textContent="";
   }else if(val==="赤"){
     redCell.textContent="赤";
-    redCell.classList.add("red");
     blueCell.textContent="";
   }else{
     blueCell.textContent="";
